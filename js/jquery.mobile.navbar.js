@@ -45,7 +45,7 @@ $.widget( "mobile.navbar", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$( $.mobile.navbar.prototype.options.initSelector, e.target ).navbar();
+	e.$jqmRoleElements.filter( $.mobile.navbar.prototype.options.initSelector ).navbar();
 });
 
 })( jQuery );

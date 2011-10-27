@@ -6,7 +6,8 @@
 */
 
 (function( $, undefined ) {
-	$( document ).bind( "pagecreate create", function( e ){
+	$( document ).bind( "pagecreate", function( e ){
 		e.$jqmRoleElements = $( ":jqmData(role)", e.target );
+		e.$controlElements = $( "input, textarea, select, button", e.target );
 	});
 }( jQuery ));

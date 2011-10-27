@@ -13,7 +13,7 @@ $.fn.fieldcontain = function( options ) {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$( ":jqmData(role='fieldcontain')", e.target ).fieldcontain();
+	e.$jqmRoleElements.filter( ":jqmData(role='fieldcontain')" ).fieldcontain();
 });
 
 })( jQuery );

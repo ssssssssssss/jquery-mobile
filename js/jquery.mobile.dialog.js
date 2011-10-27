@@ -72,8 +72,8 @@ $.widget( "mobile.dialog", $.mobile.widget, {
 });
 
 //auto self-init widgets
-$( $.mobile.dialog.prototype.options.initSelector ).live( "pagecreate", function(){
-	$( this ).dialog();
+$( document ).bind( "pagecreate create", function( e ){
+	e.$jqmRoleElements.filter( $.mobile.dialog.prototype.options.initSelector ).dialog();
 });
 
 })( jQuery, this );

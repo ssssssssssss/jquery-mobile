@@ -132,7 +132,7 @@ $.widget( "mobile.textinput", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$.mobile.textinput.prototype.enhanceWithin( e.target );
+	$.mobile.textinput.prototype.enhanceWithin( e.target, e.$controlElements );
 });
 
 })( jQuery );

@@ -49,7 +49,7 @@ $.fn.controlgroup = function( options ) {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$( ":jqmData(role='controlgroup')", e.target ).controlgroup({ excludeInvisible: false });
+	e.$jqmRoleElements.filter( ":jqmData(role='controlgroup')" ).controlgroup({ excludeInvisible: false });
 });
 
 })(jQuery);

@@ -193,7 +193,7 @@ $.widget( "mobile.checkboxradio", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$.mobile.checkboxradio.prototype.enhanceWithin( e.target );
+	$.mobile.checkboxradio.prototype.enhanceWithin( e.target, e.$controlElements );
 });
 
 })( jQuery );

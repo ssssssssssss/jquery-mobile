@@ -309,7 +309,7 @@ $.widget( "mobile.listview", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$( $.mobile.listview.prototype.options.initSelector, e.target ).listview();
+	e.$jqmRoleElements.filter( $.mobile.listview.prototype.options.initSelector ).listview();
 });
 
 })( jQuery );

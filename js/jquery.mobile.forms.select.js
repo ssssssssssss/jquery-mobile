@@ -203,6 +203,6 @@ $.widget( "mobile.selectmenu", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$.mobile.selectmenu.prototype.enhanceWithin( e.target );
+	$.mobile.selectmenu.prototype.enhanceWithin( e.target, e.$controlElements );
 });
 })( jQuery );

@@ -36,7 +36,7 @@ $( document ).bind( "pagecreate create", function( e ){
 	options = page.options;
 
 	// degrade inputs to avoid poorly implemented native functionality
-	$( e.target ).find( "input" ).not( page.keepNativeSelector() ).each(function() {
+	e.$controlElements.filter( "input" ).not( page.keepNativeSelector() ).each(function() {
 		var $this = $( this ),
 			type = this.getAttribute( "type" ),
 			optType = options.degradeInputs[ type ] || "text";

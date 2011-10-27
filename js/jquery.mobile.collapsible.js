@@ -155,7 +155,7 @@ $.widget( "mobile.collapsible", $.mobile.widget, {
 
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
-	$( $.mobile.collapsible.prototype.options.initSelector, e.target ).collapsible();
+	e.$jqmRoleElements.filter( $.mobile.collapsible.prototype.options.initSelector ).collapsible();
 });
 
 })( jQuery );
