@@ -1,10 +1,23 @@
 /*
-* jQuery Mobile Framework : custom "selectmenu" plugin
-* Copyright (c) jQuery Project
-* Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
+* custom "selectmenu" plugin
 */
 
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+//>>description: Fully-custom select menus.
+//>>label: Custom Selects
+//>>group: forms
+
+define( [
+	"jquery",
+	"./jquery.mobile.buttonMarkup",
+	"./jquery.mobile.core",
+	"./jquery.mobile.dialog",
+	"./jquery.mobile.forms.select",
+	"./jquery.mobile.listview",
+	"./jquery.mobile.page",
+	// NOTE expects ui content in the defined page, see selector for menuPageContent definition
+	"./jquery.mobile.page.sections" ], function( $ ) {
+//>>excludeEnd("jqmBuildExclude");
 (function( $, undefined ) {
 	var extendSelect = function( widget ){
 
@@ -22,9 +35,9 @@
 				"<div class='ui-title'>" + label.getEncodedText() + "</div>"+
 				"</div>"+
 				"<div data-" + $.mobile.ns + "role='content'></div>"+
-				"</div>" ).appendTo( $.mobile.pageContainer ).page(),
+				"</div>" ),
 
-			listbox =  $("<div>", { "class": "ui-selectmenu ui-selectmenu-hidden ui-overlay-shadow ui-corner-all ui-overlay-" + widget.options.overlayTheme + " " + $.mobile.defaultDialogTransition } ).insertAfter(screen),
+			listbox =  $("<div>", { "class": "ui-selectmenu ui-selectmenu-hidden ui-overlay-shadow ui-corner-all ui-body-" + widget.options.overlayTheme + " " + $.mobile.defaultDialogTransition } ).insertAfter(screen),
 
 			list = $( "<ul>", {
 				"class": "ui-selectmenu-list",
@@ -33,7 +46,9 @@
 				"aria-labelledby": buttonId
 			}).attr( "data-" + $.mobile.ns + "theme", widget.options.theme ).appendTo( listbox ),
 
-			header = $( "<div>" ).attr( "data-" + $.mobile.ns + "theme", widget.options.theme ).prependTo( listbox ),
+			header = $( "<div>", {
+				"class": "ui-header ui-bar-" + widget.options.theme
+			}).prependTo( listbox ),
 
 			headerTitle = $( "<h1>", {
 				"class": "ui-title"
@@ -45,9 +60,9 @@
 				"class": "ui-btn-left"
 			}).attr( "data-" + $.mobile.ns + "iconpos", "notext" ).attr( "data-" + $.mobile.ns + "icon", "delete" ).appendTo( header ).buttonMarkup(),
 
-			menuPageContent = menuPage.find( ".ui-content" ),
-
-			menuPageClose = menuPage.find( ".ui-header a" );
+			menuPageContent,
+			
+			menuPageClose;
 
 
 		$.extend( widget, {
@@ -294,15 +309,16 @@
 				}
 
 				var self = this,
-					menuHeight = self.list.parent().outerHeight(),
-					menuWidth = self.list.parent().outerWidth(),
+          $window = $( window ),
+          selfListParent = self.list.parent(),
+					menuHeight = selfListParent.outerHeight(),
+					menuWidth = selfListParent.outerWidth(),
 					activePage = $( ".ui-page-active" ),
-					tOverflow = $.support.touchOverflow && $.mobile.touchOverflowEnabled,
-					tScrollElem = activePage.is( ".ui-native-fixed" ) ? activePage.find( ".ui-content" ) : activePage;
-					scrollTop = tOverflow ? tScrollElem.scrollTop() : $( window ).scrollTop(),
+					tScrollElem = activePage,
+					scrollTop = $window.scrollTop(),
 					btnOffset = self.button.offset().top,
-					screenHeight = window.innerHeight,
-					screenWidth = window.innerWidth;
+					screenHeight = $window.height(),
+					screenWidth = $window.width();
 
 				//add active class to button
 				self.button.addClass( $.mobile.activeBtnClass );
@@ -317,12 +333,17 @@
 				}
 
 				if ( menuHeight > screenHeight - 80 || !$.support.scrollTop ) {
+					
+					self.menuPage.appendTo( $.mobile.pageContainer ).page();					
+					self.menuPageContent = menuPage.find( ".ui-content" );
+					self.menuPageClose = menuPage.find( ".ui-header a" );
+					
 					// prevent the parent page from being removed from the DOM,
 					// otherwise the results of selecting a list item in the dialog
 					// fall into a black hole
 					self.thisPage.unbind( "pagehide.remove" );
 
-					//for webos (set lastscroll using button offset)
+					//for WebOS/Opera Mini (set lastscroll using button offset)
 					if ( scrollTop == 0 && btnOffset > screenHeight ) {
 						self.thisPage.one( "pagehide", function() {
 							$( this ).jqmData( "lastScroll", btnOffset );
@@ -409,49 +430,63 @@
 
 				self.list.empty().filter( ".ui-listview" ).listview( "destroy" );
 
-				// Populate menu with options from select element
-				self.select.find( "option" ).each( function( i ) {
-					var $this = $( this ),
-						$parent = $this.parent(),
-						text = $this.getEncodedText(),
-						anchor = "<a href='#'>"+ text +"</a>",
-						classes = [],
-						extraAttrs = [];
-
-					// Are we inside an optgroup?
-					if ( $parent.is( "optgroup" ) ) {
-						var optLabel = $parent.attr( "label" );
-
-						// has this optgroup already been built yet?
-						if ( $.inArray( optLabel, optgroups ) === -1 ) {
-							lis.push( "<li data-" + $.mobile.ns + "role='list-divider'>"+ optLabel +"</li>" );
-							optgroups.push( optLabel );
+				var $options = self.select.find("option"),
+					numOptions = $options.length,                      
+					select = this.select[ 0 ],                         
+					dataPrefix = 'data-' + $.mobile.ns,                 
+					dataIndexAttr = dataPrefix + 'option-index', 
+					dataIconAttr = dataPrefix + 'icon',
+					dataRoleAttr = dataPrefix + 'role',
+					fragment = document.createDocumentFragment(),
+					optGroup;
+									
+				for (var i = 0; i < numOptions;i++){				
+					var option = $options[i],
+						$option = $(option),
+						parent = option.parentNode,
+						text = $option.text(),			
+						anchor  = document.createElement('a');
+						classes = [];				
+					
+					anchor.setAttribute('href','#');							
+					anchor.appendChild(document.createTextNode(text));	
+					
+					// Are we inside an optgroup?									
+					if (parent !== select && parent.nodeName.toLowerCase() === "optgroup"){
+						var optLabel = parent.getAttribute('label');
+						if ( optLabel != optGroup) {						
+							var divider = document.createElement('li');
+							divider.setAttribute(dataRoleAttr,'list-divider');
+							divider.setAttribute('role','option');
+							divider.setAttribute('tabindex','-1');
+							divider.appendChild(document.createTextNode(optLabel));
+							fragment.appendChild(divider);
+							optGroup = optLabel;
 						}
-					}
-
-					// Find placeholder text
-					// TODO: Are you sure you want to use getAttribute? ^RW
-					if ( !this.getAttribute( "value" ) || text.length == 0 || $this.jqmData( "placeholder" ) ) {
+					}															
+										
+					if (!placeholder && (!option.getAttribute( "value" ) || text.length == 0 || $option.jqmData( "placeholder" )) ) {
 						if ( o.hidePlaceholderMenuItems ) {
 							classes.push( "ui-selectmenu-placeholder" );
-						}
-						placeholder = self.placeholder = text;
+						}						
+						placeholder = self.placeholder = text;									
 					}
-
-					// support disabled option tags
-					if ( this.disabled ) {
+															
+					var item = document.createElement('li');															
+					if ( option.disabled ) {
 						classes.push( "ui-disabled" );
-						extraAttrs.push( "aria-disabled='true'" );
+						item.setAttribute('aria-disabled',true);
 					}
-
-					lis.push( "<li data-" + $.mobile.ns + "option-index='" + i + "' data-" + $.mobile.ns + "icon='"+ dataIcon +"' class='"+ classes.join(" ") + "' " + extraAttrs.join(" ") +">"+ anchor +"</li>" );
-				});
-
-				self.list.html( lis.join(" ") );
-
-				self.list.find( "li" )
-					.attr({ "role": "option", "tabindex": "-1" })
-					.first().attr( "tabindex", "0" );
+					item.setAttribute(dataIndexAttr,i);
+					item.setAttribute(dataIconAttr,dataIcon);					
+					item.className = classes.join(" ");
+					item.setAttribute('role','option');
+					item.setAttribute('tabindex','-1');
+					item.appendChild(anchor);					
+					fragment.appendChild(item);
+				}	
+				fragment.firstChild.setAttribute('tabindex',0);
+				self.list[0].appendChild(fragment);
 
 				// Hide header close link for single selects
 				if ( !this.isMultiple ) {
@@ -484,7 +519,7 @@
 		});
 	};
 
-	$( "select" ).live( "selectmenubeforecreate", function(){
+	$( document ).delegate( "select", "selectmenubeforecreate", function(){
 		var selectmenuWidget = $( this ).data( "selectmenu" );
 
 		if( !selectmenuWidget.options.nativeMenu ){
@@ -492,3 +527,6 @@
 		}
 	});
 })( jQuery );
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+});
+//>>excludeEnd("jqmBuildExclude");

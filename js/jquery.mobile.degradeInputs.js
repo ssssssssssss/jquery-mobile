@@ -1,10 +1,9 @@
-/*
-* jQuery Mobile Framework : "degradeInputs" plugin - degrades inputs to another type after custom enhancements are made.
-* Copyright (c) jQuery Project
-* Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
-*/
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+//>>description: Degrades inputs to another type after custom enhancements are made.
+//>>label: Degrade Inputs
 
+define( [ "jquery", "./jquery.mobile.page" ], function( $ ) {
+//>>excludeEnd("jqmBuildExclude");
 (function( $, undefined ) {
 
 $.mobile.page.prototype.options.degradeInputs = {
@@ -27,7 +26,7 @@ $.mobile.page.prototype.options.degradeInputs = {
 //auto self-init widgets
 $( document ).bind( "pagecreate create", function( e ){
 
-	var page = $(e.target).closest(':jqmData(role="page")').data("page"), options;
+	var page = $.mobile.closestPageData($(e.target)), options;
 
 	if( !page ) {
 		return;
@@ -55,3 +54,6 @@ $( document ).bind( "pagecreate create", function( e ){
 });
 
 })( jQuery );
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+});
+//>>excludeEnd("jqmBuildExclude");

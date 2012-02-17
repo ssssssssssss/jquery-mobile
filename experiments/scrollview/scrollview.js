@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 function ResizePageContentHeight(page)
 {
 	var $page = $(page);

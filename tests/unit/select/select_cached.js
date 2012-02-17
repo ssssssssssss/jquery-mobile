@@ -21,12 +21,13 @@
 			},
 
 			function(){
+				ok( $.mobile.activePage.is("#dialog-select-parent-cache-test"), "cached page appears" );
 				selectButton = $( "#cached-page-select" ).siblings( 'a' );
 				selectButton.click();
 			},
 
 			function(){
-				ok( $.mobile.activePage.hasClass('ui-dialog'), "the dialog came up" );
+				ok( $.mobile.activePage.hasClass('ui-dialog-page'), "the dialog came up" );
 				var option = $.mobile.activePage.find( "li a" ).not(":contains('" + selectButton.text() + "')").last();
 				value = option.text();
 				option.click();
@@ -83,7 +84,7 @@
 			},
 
 			function(){
-				ok( $.mobile.activePage.hasClass('ui-dialog'), "the dialog came up" );
+				ok( $.mobile.activePage.hasClass('ui-dialog-page'), "the dialog came up" );
 				$.mobile.activePage.find( "li a" ).last().click();
 			},
 
@@ -101,23 +102,35 @@
 
 	asyncTest( "menupage is removed when the parent page is removed", function(){
 		var dialogCount = $(":jqmData(role='dialog')").length;
-
 		$.testHelper.pageSequence([
 			resetHash,
 
 			function(){
-
 				$.mobile.changePage( "uncached-dom-cached-false.html" );
 			},
 
 			function(){
-				same( $(":jqmData(role='dialog')").length, dialogCount + 1 );
+				// for performance reason we don't initially create the menu dialog now
+				same( $(":jqmData(role='dialog')").length, dialogCount);
+				
+				// manually trigger dialog opening
+				$( "#domcache-uncached-page-select" ).data( 'selectmenu' ).open();																											
+			},
+					
+			function(){
+				// check if dialog was successfully  created
+				same( $(":jqmData(role='dialog')").length, dialogCount + 1 );		
+				$( "#domcache-uncached-page-select" ).data( 'selectmenu' ).close();													
+			},
+			
+			function(){
+				// navigate to parent(initial) page
 				window.history.back();
 			},
-
+			
 			function() {
 				same( $(":jqmData(role='dialog')").length, dialogCount );
-				start();
+				start();	
 			}
 		]);
 	});

@@ -1,10 +1,9 @@
-/*
-* jQuery Mobile Framework : "fieldcontain" plugin - simple class additions to make form row separators
-* Copyright (c) jQuery Project
-* Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
-*/
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+//>>description: Simple class additions to make form row separators
+//>>label: Fieldcontains
 
+define( [ "jquery" ], function( $ ) {
+//>>excludeEnd("jqmBuildExclude");
 (function( $, undefined ) {
 
 $.fn.fieldcontain = function( options ) {
@@ -17,3 +16,6 @@ $( document ).bind( "pagecreate create", function( e ){
 });
 
 })( jQuery );
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+});
+//>>excludeEnd("jqmBuildExclude");

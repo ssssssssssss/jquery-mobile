@@ -1,10 +1,9 @@
-/*
-* jQuery Mobile Framework : "listview" filter extension
-* Copyright (c) jQuery Project
-* Dual licensed under the MIT or GPL Version 2 licenses.
-* http://jquery.org/license
-*/
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+//>>description: Adds a filtering textfield to listviews
+//>>label: Listview Filter
 
+define( [ "jquery", "./jquery.mobile.listview", "./jquery.mobile.forms.textinput" ], function( $ ) {
+//>>excludeEnd("jqmBuildExclude");
 (function( $, undefined ) {
 
 $.mobile.listview.prototype.options.filter = false;
@@ -14,7 +13,7 @@ $.mobile.listview.prototype.options.filterCallback = function( text, searchValue
 	return text.toLowerCase().indexOf( searchValue ) === -1;
 };
 
-$( ":jqmData(role='listview')" ).live( "listviewcreate", function() {
+$( document ).delegate( ":jqmData(role='listview')", "listviewcreate", function() {
 
 	var list = $( this ),
 		listview = list.data( "listview" );
@@ -40,15 +39,13 @@ $( ":jqmData(role='listview')" ).live( "listviewcreate", function() {
 				lastval = $this.jqmData( "lastval" ) + "",
 				childItems = false,
 				itemtext = "",
-				item, change;
+				item;
 
 			// Change val as lastval for next execution
 			$this.jqmData( "lastval" , val );
-			change = val.substr( 0 , lastval.length - 1 ).replace( lastval , "" );
+			if ( val.length < lastval.length || val.indexOf(lastval) !== 0 ) {
 
-			if ( val.length < lastval.length || change.length != ( val.length - lastval.length ) ) {
-
-				// Removed chars or pasted something totaly different, check all items
+				// Removed chars or pasted something totally different, check all items
 				listItems = list.children();
 			} else {
 
@@ -78,7 +75,7 @@ $( ":jqmData(role='listview')" ).live( "listviewcreate", function() {
 						item.toggleClass( "ui-filter-hidequeue" , true );
 					} else {
 
-						// There"s a shown item in the bucket
+						// There's a shown item in the bucket
 						childItems = true;
 					}
 				}
@@ -115,3 +112,6 @@ $( ":jqmData(role='listview')" ).live( "listviewcreate", function() {
 });
 
 })( jQuery );
+//>>excludeStart("jqmBuildExclude", pragmas.jqmBuildExclude);
+});
+//>>excludeEnd("jqmBuildExclude");
